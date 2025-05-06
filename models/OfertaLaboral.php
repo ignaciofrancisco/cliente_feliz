@@ -4,7 +4,8 @@ include_once('../config/database.php'); // o la ruta correcta si está en otro d
 class OfertaLaboral {
 
     private $pdo;
-    private $conn;
+
+    // Constructor
     public function __construct() {
         global $pdo;
         $this->pdo = $pdo;
@@ -36,9 +37,6 @@ class OfertaLaboral {
             return ['status' => 'error', 'message' => 'Error al crear la oferta laboral'];
         }
     }
-    
-    
-    
 
     // Método para obtener todas las ofertas laborales
     public function getAll() {
@@ -71,7 +69,7 @@ class OfertaLaboral {
                     estado = :estado
                 WHERE id = :id";
     
-        $stmt = $this->conn->prepare($sql);
+        $stmt = $this->pdo->prepare($sql);
     
         $stmt->bindParam(':titulo', $data['titulo']);
         $stmt->bindParam(':descripcion', $data['descripcion']);
@@ -87,17 +85,15 @@ class OfertaLaboral {
     
         return ["status" => "success", "message" => "Oferta laboral actualizada exitosamente"];
     }
-    
 
-    // Método para eliminar una oferta laboral
+    // Método para eliminar (desactivar) una oferta laboral
     public function delete($id) {
-        $sql = "UPDATE ofertalaboral SET estado = 'Inactiva' WHERE id = :id";
-        $stmt = $this->conn->prepare($sql);
+        $sql = "UPDATE ofertalaboral SET estado = 'Cerrada' WHERE id = :id";
+        $stmt = $this->pdo->prepare($sql);
         $stmt->bindParam(':id', $id);
         $stmt->execute();
     
         return ["status" => "success", "message" => "Oferta laboral desactivada"];
     }
-    
 }
 ?>

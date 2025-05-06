@@ -5,65 +5,63 @@ include_once('../controllers/OfertaLaboralController.php');
 // Crear instancias de los controladores
 $usuarioController = new UsuarioController();
 $ofertaLaboralController = new OfertaLaboralController();
+$method = $_SERVER['REQUEST_METHOD'];
+$requestUri = $_SERVER['REQUEST_URI'];
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////// //////////Ruta para crear usuario////////////////////////////////////
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_GET['resource'] == 'usuario') {
-    $data = json_decode(file_get_contents("php://input"), true);
-    echo $usuarioController->create($data);
+if ($method === 'POST' && preg_match('/\/api\/usuarios$/', $requestUri)) {
+    $data = json_decode(file_get_contents('php://input'), true);
+    $usuarioController->create($data);
 }
 
-// Ruta para obtener todos los usuarios
-if ($_SERVER['REQUEST_METHOD'] == 'GET' && $_GET['resource'] == 'usuario') {
+if ($method === 'GET' && preg_match('/\/api\/usuarios$/', $requestUri)) {
     echo $usuarioController->getAll();
 }
 
-// Ruta para obtener un usuario por ID
-if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['id']) && $_GET['resource'] == 'usuario') {
-    echo $usuarioController->getById($_GET['id']);
+if ($method === 'GET' && preg_match('/\/api\/usuarios\/(\d+)/', $requestUri, $matches)) {
+    $id = $matches[1];
+    echo $usuarioController->getById($id);
 }
 
-// Ruta para actualizar un usuario
-if ($_SERVER['REQUEST_METHOD'] == 'PUT' && isset($_GET['id']) && $_GET['resource'] == 'usuario') {
-    $data = json_decode(file_get_contents("php://input"), true);
-    echo $usuarioController->update($_GET['id'], $data);
+if ($method === 'PUT' && preg_match('/\/api\/usuarios\/(\d+)/', $requestUri, $matches)) {
+    $id = $matches[1];
+    $data = json_decode(file_get_contents('php://input'), true);
+    $usuarioController->update($id, $data);
 }
 
-// Ruta para eliminar un usuario
-if ($_SERVER['REQUEST_METHOD'] == 'DELETE' && isset($_GET['id']) && $_GET['resource'] == 'usuario') {
-    echo $usuarioController->delete($_GET['id']);
+if ($method === 'DELETE' && preg_match('/\/api\/usuarios\/(\d+)/', $requestUri, $matches)) {
+    $id = $matches[1];
+    $usuarioController->delete($id);
 }
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////// //////////Ruta para crear una nueva oferta laboral////////////////////////////////////
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_GET['resource'] == 'ofertalaboral') {
-    $data = json_decode(file_get_contents("php://input"), true);
-    echo $ofertaLaboralController->create($data);
+if ($method === 'POST' && preg_match('/\/api\/ofertas$/', $requestUri)) {
+    $data = json_decode(file_get_contents('php://input'), true);
+    $ofertaLaboralController->create($data);
 }
 
-// Ruta para obtener todas las ofertas laborales
-if ($_SERVER['REQUEST_METHOD'] == 'GET' && $_GET['resource'] == 'ofertalaboral') {
+if ($method === 'GET' && preg_match('/\/api\/ofertas$/', $requestUri)) {
     echo $ofertaLaboralController->getAll();
 }
 
-// Ruta para obtener una oferta laboral por ID
-if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['id']) && $_GET['resource'] == 'ofertalaboral') {
-    echo $ofertaLaboralController->getById($_GET['id']);
+if ($method === 'GET' && preg_match('/\/api\/ofertas\/(\d+)/', $requestUri, $matches)) {
+    $id = $matches[1];
+    echo $ofertaLaboralController->getById($id);
 }
 
-// Ruta para actualizar una oferta laboral
-if ($_SERVER['REQUEST_METHOD'] === 'PUT' && preg_match('/\/api\/ofertas\/(\d+)/', $_SERVER['REQUEST_URI'], $matches)) {
+if ($method === 'PUT' && preg_match('/\/api\/ofertas\/(\d+)/', $requestUri, $matches)) {
     $id = $matches[1];
     $data = json_decode(file_get_contents('php://input'), true);
-    $controller = new OfertaLaboralController();
-    $controller->update($id, $data);
+    $ofertaLaboralController->update($id, $data);
 }
 
-// Eliminar (desactivar) una oferta laboral
-if ($_SERVER['REQUEST_METHOD'] === 'DELETE' && preg_match('/\/api\/ofertas\/(\d+)/', $_SERVER['REQUEST_URI'], $matches)) {
+if ($method === 'DELETE' && preg_match('/\/api\/ofertas\/(\d+)/', $requestUri, $matches)) {
     $id = $matches[1];
-    $controller = new OfertaLaboralController();
-    $controller->delete($id);
+    $ofertaLaboralController->delete($id);
 }
 
 

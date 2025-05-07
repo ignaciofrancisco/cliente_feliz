@@ -1,15 +1,16 @@
 <?php
+header('Content-Type: application/json');
+
 // Incluye controladores
 include_once('../controllers/UsuarioController.php');
 include_once('../controllers/OfertaLaboralController.php');
-// Crear instancias de los controladores
-$usuarioController = new UsuarioController();
-$ofertaLaboralController = new OfertaLaboralController();
+include_once('../controllers/PostulacionController.php');
 $method = $_SERVER['REQUEST_METHOD'];
 $requestUri = $_SERVER['REQUEST_URI'];
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////// //////////Ruta para crear usuario////////////////////////////////////
+/////////////// //////////Ruta para crear usuario////////////////////////////////////////////////////
+$usuarioController = new UsuarioController();
 if ($method === 'POST' && preg_match('/\/api\/usuarios$/', $requestUri)) {
     $data = json_decode(file_get_contents('php://input'), true);
     $usuarioController->create($data);
@@ -38,7 +39,7 @@ if ($method === 'DELETE' && preg_match('/\/api\/usuarios\/(\d+)/', $requestUri, 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////// //////////Ruta para crear una nueva oferta laboral////////////////////////////////////
-
+$ofertaLaboralController = new OfertaLaboralController();
 if ($method === 'POST' && preg_match('/\/api\/ofertas$/', $requestUri)) {
     $data = json_decode(file_get_contents('php://input'), true);
     $ofertaLaboralController->create($data);
@@ -63,6 +64,62 @@ if ($method === 'DELETE' && preg_match('/\/api\/ofertas\/(\d+)/', $requestUri, $
     $id = $matches[1];
     $ofertaLaboralController->delete($id);
 }
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////// //////////Ruta para crear una postulacion////////////////////////////////////////////
+$postulacionController = new PostulacionController();
+// Crear
+if ($method === 'POST' && preg_match('/\/api\/postulaciones$/', $requestUri)) {
+    $data = json_decode(file_get_contents('php://input'), true);
+    $postulacionController->create($data);
+}
+
+// Obtener todas las postulaciones
+if ($method === 'GET' && preg_match('/\/api\/postulaciones$/', $requestUri)) {
+    header('Content-Type: application/json');  // Aseguramos el tipo de contenido
+    $response = $postulacionController->getAll();
+    echo json_encode($response);  // Respondemos en formato JSON
+}
+
+// Obtener una postulación por ID
+if ($method === 'GET' && preg_match('/\/api\/postulaciones\/(\d+)/', $requestUri, $matches)) {
+    $id = $matches[1];
+    header('Content-Type: application/json');  // Aseguramos el tipo de contenido
+    $response = $postulacionController->getById($id);
+    echo json_encode($response);  // Respondemos en formato JSON
+}
+
+// Actualizar una postulación
+if ($method === 'PUT' && preg_match('/\/api\/postulaciones\/(\d+)/', $requestUri, $matches)) {
+    $id = $matches[1];
+    $data = json_decode(file_get_contents("php://input"), true);
+    $response = $postulacionController->update($id, $data);
+    header('Content-Type: application/json');
+    echo json_encode($response);  // Respondemos en formato JSON
+}
+
+// Eliminar una postulación
+if ($method === 'DELETE' && preg_match('/\/api\/postulaciones\/(\d+)/', $requestUri, $matches)) {
+    $id = $matches[1];
+    $response = $postulacionController->delete($id);
+    header('Content-Type: application/json');
+    echo json_encode($response);  // Respondemos en formato JSON
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ?>

@@ -66,7 +66,8 @@ class OfertaLaboral {
                     tipo_contrato = :tipo_contrato,
                     fecha_publicacion = :fecha_publicacion,
                     fecha_cierre = :fecha_cierre,
-                    estado = :estado
+                    estado = :estado,
+                    reclutador_id = :reclutador_id
                 WHERE id = :id";
     
         $stmt = $this->pdo->prepare($sql);
@@ -79,12 +80,14 @@ class OfertaLaboral {
         $stmt->bindParam(':fecha_publicacion', $data['fecha_publicacion']);
         $stmt->bindParam(':fecha_cierre', $data['fecha_cierre']);
         $stmt->bindParam(':estado', $data['estado']);
+        $stmt->bindParam(':reclutador_id', $data['reclutador_id']);
         $stmt->bindParam(':id', $id);
     
         $stmt->execute();
     
         return ["status" => "success", "message" => "Oferta laboral actualizada exitosamente"];
     }
+    
 
     // Método para eliminar (desactivar) una oferta laboral
     public function delete($id) {

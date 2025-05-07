@@ -6,6 +6,7 @@ include_once(__DIR__ . '/../controllers/UsuarioController.php');
 include_once(__DIR__ . '/../controllers/OfertaLaboralController.php');
 include_once(__DIR__ . '/../controllers/PostulacionController.php');
 require_once(__DIR__ . '/../controllers/AntecedenteAcademicoController.php');
+require_once(__DIR__ . '/../controllers/AntecedenteLaboralController.php');
 
 
 
@@ -144,6 +145,37 @@ if ($method === 'DELETE' && preg_match('/\/api\/antecedentes-academicos\/(\d+)/'
     $antecedenteAcademicoController->delete($matches[1]);
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////// //////////Ruta para AntecedentesLaborales/////////////////////////////////////////////////
+
+$antecedenteLaboralController = new AntecedenteLaboralController();
+
+// Crear
+if ($method === 'POST' && preg_match('/\/api\/antecedentes-laborales$/', $requestUri)) {
+    $data = json_decode(file_get_contents('php://input'), true);
+    $antecedenteLaboralController->create($data);
+}
+
+// Obtener todos
+if ($method === 'GET' && preg_match('/\/api\/antecedentes-laborales$/', $requestUri)) {
+    $antecedenteLaboralController->getAll();
+}
+
+// Obtener por ID
+if ($method === 'GET' && preg_match('/\/api\/antecedentes-laborales\/(\d+)/', $requestUri, $matches)) {
+    $antecedenteLaboralController->getById($matches[1]);
+}
+
+// Actualizar
+if ($method === 'PUT' && preg_match('/\/api\/antecedentes-laborales\/(\d+)/', $requestUri, $matches)) {
+    $data = json_decode(file_get_contents('php://input'), true);
+    $antecedenteLaboralController->update($matches[1], $data);
+}
+
+// Eliminar
+if ($method === 'DELETE' && preg_match('/\/api\/antecedentes-laborales\/(\d+)/', $requestUri, $matches)) {
+    $antecedenteLaboralController->delete($matches[1]);
+}
 
 
 

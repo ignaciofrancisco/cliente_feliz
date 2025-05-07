@@ -1,12 +1,18 @@
 <?php
 header('Content-Type: application/json');
 
-// Incluye controladores
-include_once('../controllers/UsuarioController.php');
-include_once('../controllers/OfertaLaboralController.php');
-include_once('../controllers/PostulacionController.php');
+// Incluye controladores desde carpeta ../controllers/
+include_once(__DIR__ . '/../controllers/UsuarioController.php');
+include_once(__DIR__ . '/../controllers/OfertaLaboralController.php');
+include_once(__DIR__ . '/../controllers/PostulacionController.php');
+require_once(__DIR__ . '/../controllers/AntecedenteAcademicoController.php');
+
+
+
+
 $method = $_SERVER['REQUEST_METHOD'];
 $requestUri = $_SERVER['REQUEST_URI'];
+$requestUri = str_replace('/api/api.php', '/api', $requestUri);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////// //////////Ruta para crear usuario////////////////////////////////////////////////////
@@ -108,9 +114,35 @@ if ($method === 'DELETE' && preg_match('/\/api\/postulaciones\/(\d+)/', $request
 }
 
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////// //////////Ruta para crear AntecedentesAcademicos////////////////////////////////////////////
+$antecedenteAcademicoController = new AntecedenteAcademicoController();
+// Crear
+if ($method === 'POST' && preg_match('/\/api\/antecedentes-academicos$/', $requestUri)) {
+    $data = json_decode(file_get_contents('php://input'), true);
+    $antecedenteAcademicoController->create($data);
+}
 
+// Obtener todos
+if ($method === 'GET' && preg_match('/\/api\/antecedentes-academicos$/', $requestUri)) {
+    $antecedenteAcademicoController->getAll();
+}
 
+// Obtener por ID
+if ($method === 'GET' && preg_match('/\/api\/antecedentes-academicos\/(\d+)/', $requestUri, $matches)) {
+    $antecedenteAcademicoController->getById($matches[1]);
+}
 
+// Actualizar
+if ($method === 'PUT' && preg_match('/\/api\/antecedentes-academicos\/(\d+)/', $requestUri, $matches)) {
+    $data = json_decode(file_get_contents('php://input'), true);
+    $antecedenteAcademicoController->update($matches[1], $data);
+}
+
+// Eliminar
+if ($method === 'DELETE' && preg_match('/\/api\/antecedentes-academicos\/(\d+)/', $requestUri, $matches)) {
+    $antecedenteAcademicoController->delete($matches[1]);
+}
 
 
 

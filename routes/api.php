@@ -1,18 +1,19 @@
 <?php
+// Establece el tipo de contenido de la respuesta como JSON
 header('Content-Type: application/json');
 
-// Incluye controladores desde carpeta ../controllers/
+// Incluye todos los controladores necesarios desde la carpeta controllers
 include_once(__DIR__ . '/../controllers/UsuarioController.php');
 include_once(__DIR__ . '/../controllers/OfertaLaboralController.php');
 include_once(__DIR__ . '/../controllers/PostulacionController.php');
 require_once(__DIR__ . '/../controllers/AntecedenteAcademicoController.php');
 require_once(__DIR__ . '/../controllers/AntecedenteLaboralController.php');
 
-
-
-
+// Detecta el método HTTP y la URI solicitada
 $method = $_SERVER['REQUEST_METHOD'];
 $requestUri = $_SERVER['REQUEST_URI'];
+
+// Ajusta la URI para eliminar la parte del script api.php si está presente
 $requestUri = str_replace('/api/api.php', '/api', $requestUri);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,36 +84,33 @@ if ($method === 'POST' && preg_match('/\/api\/postulaciones$/', $requestUri)) {
 }
 
 // Obtener todas las postulaciones
+// Crear una postulación
+if ($method === 'POST' && preg_match('/\/api\/postulaciones$/', $requestUri)) {
+    $data = json_decode(file_get_contents('php://input'), true);
+    $postulacionController->create($data);
+}
+
+// Obtener todas las postulaciones
 if ($method === 'GET' && preg_match('/\/api\/postulaciones$/', $requestUri)) {
-    header('Content-Type: application/json');  // Aseguramos el tipo de contenido
-    $response = $postulacionController->getAll();
-    echo json_encode($response);  // Respondemos en formato JSON
+    $postulacionController->getAll();
 }
 
 // Obtener una postulación por ID
 if ($method === 'GET' && preg_match('/\/api\/postulaciones\/(\d+)/', $requestUri, $matches)) {
-    $id = $matches[1];
-    header('Content-Type: application/json');  // Aseguramos el tipo de contenido
-    $response = $postulacionController->getById($id);
-    echo json_encode($response);  // Respondemos en formato JSON
+    $postulacionController->getById($matches[1]);
 }
 
-// Actualizar una postulación
+// Actualizar una postulación por ID
 if ($method === 'PUT' && preg_match('/\/api\/postulaciones\/(\d+)/', $requestUri, $matches)) {
-    $id = $matches[1];
-    $data = json_decode(file_get_contents("php://input"), true);
-    $response = $postulacionController->update($id, $data);
-    header('Content-Type: application/json');
-    echo json_encode($response);  // Respondemos en formato JSON
+    $data = json_decode(file_get_contents('php://input'), true);
+    $postulacionController->update($matches[1], $data);
 }
 
-// Eliminar una postulación
+// Eliminar una postulación por ID
 if ($method === 'DELETE' && preg_match('/\/api\/postulaciones\/(\d+)/', $requestUri, $matches)) {
-    $id = $matches[1];
-    $response = $postulacionController->delete($id);
-    header('Content-Type: application/json');
-    echo json_encode($response);  // Respondemos en formato JSON
+    $postulacionController->delete($matches[1]);
 }
+
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
